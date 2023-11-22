@@ -125,7 +125,7 @@ const HomeScreen = ({ navigation }) => {
           <View
             style={{
               padding: 10,
-              backgroundColor: "#fffaf3",
+              backgroundColor: "#fffae3",
               width: "60%",
               borderRadius: 8,
             }}
