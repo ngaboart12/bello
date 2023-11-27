@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Pressable,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSingelproductQuery } from "../redux/apiSlice/userApiAlice";
@@ -32,6 +33,34 @@ const SingelProduct = ({ route }) => {
   const dispatch = useDispatch();
 
   const [product, setProduct] = useState(null);
+  const [selectedColors, setSelectedColors] = useState([]);
+
+  const colorData = [
+    { name: "Red", code: "#FF0000" },
+    { name: "Green", code: "#00FF00" },
+    { name: "Blue", code: "#0000FF" },
+    { name: "orange", code: "#ffb647" },
+    { name: "white", code: "#fff" },
+    { name: "black", code: "#000" },
+    // Add more colors as needed
+  ];
+
+  const handleColorChange = (color) => {
+    if (selectedColors.includes(color)) {
+      // If the color is already selected, remove it
+      setSelectedColors(
+        selectedColors.filter((selectedColor) => selectedColor !== color)
+      );
+    } else {
+      // Otherwise, add it to the selected colors
+      setSelectedColors([...selectedColors, color]);
+    }
+  };
+
+  const getColorName = (color) => {
+    const colorObject = colorData.find((item) => item.code === color);
+    return colorObject ? colorObject.name : "Unknown";
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -41,7 +70,9 @@ const SingelProduct = ({ route }) => {
 
         if (docSnapshot.exists()) {
           const productData = docSnapshot.data();
+          await new Promise((resolve) => setTimeout(resolve, 500));
           setProduct(productData);
+          setIsLoading(false);
         } else {
           console.log("No such document!");
         }
@@ -63,8 +94,16 @@ const SingelProduct = ({ route }) => {
 
   if (!product) {
     return (
-      <View>
-        <Text>Loading...</Text>
+      <View
+        style={{
+          height: "100%",
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignSelf: "center",
+        }}
+      >
+        <ActivityIndicator size="small" color="#FFB648" />
       </View>
     );
   }
@@ -95,7 +134,7 @@ const SingelProduct = ({ route }) => {
             </View>
           </View>
           <View style={{ position: "absolute", right: 10, top: 30 }}>
-            <TouchableOpacity onPress={() => dispatch(addToWish(product))}>
+            <TouchableOpacity onPress={() => dispatch(addToWish())}>
               <Svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="30"
@@ -190,8 +229,8 @@ const SingelProduct = ({ route }) => {
         }}
         animationIn="slideInUp"
         animationOut="slideOutDown"
-        animationInTiming={1000}
-        animationOutTiming={1000}
+        animationInTiming={500}
+        animationOutTiming={900}
       >
         <Pressable
           onPress={() => setVisible(false)}
@@ -223,32 +262,67 @@ const SingelProduct = ({ route }) => {
               >
                 Colors
               </Text>
-              <View style={{ display: "flex", flexDirection: "row", gap: 4 }}>
-                <View
-                  style={{ height: 50, width: 50, backgroundColor: "#005E7C" }}
-                ></View>
-                <View
-                  style={{ height: 50, width: 50, backgroundColor: "white" }}
-                ></View>
-                <View
-                  style={{ height: 50, width: 50, backgroundColor: "#000000" }}
-                ></View>
-                <View
-                  style={{ height: 50, width: 50, backgroundColor: "#FFB648" }}
-                ></View>
+              <View>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  {colorData.map((item) => (
+                    <TouchableOpacity
+                      key={item.code}
+                      onPress={() => handleColorChange(item.code)}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        backgroundColor: item.code,
+                        borderWidth: selectedColors.includes(item.code) ? 2 : 0,
+                        borderWidth: 1,
+                        borderColor: "black",
+                      }}
+                    />
+                  ))}
+                </View>
+
+                {selectedColors.length > 0 && (
+                  <View>
+                    <Text
+                      style={{
+                        paddingTop: 15,
+                        fontSize: 18,
+                        fontFamily: "Red-Hat",
+                        color: "#979393",
+                      }}
+                    >
+                      Selected Colors:
+                    </Text>
+                    <FlatList
+                      data={selectedColors}
+                      horizontal
+                      renderItem={({ item }) => (
+                        <TouchableOpacity
+                          onPress={() => handleColorChange(item)}
+                        >
+                          <View
+                            style={{
+                              width: 40,
+                              height: 40,
+                              backgroundColor: item,
+                              margin: 5,
+                              borderWidth: 1,
+                              borderColor: "black",
+                              borderRadius: "50%",
+                            }}
+                          ></View>
+                          <Text
+                            style={{ paddingTop: 3, paddingHorizontal: 10 }}
+                          >
+                            {getColorName(item)}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={(item, index) => index.toString()}
+                    />
+                  </View>
+                )}
               </View>
-            </View>
-            <View style={{ gap: 10 }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontFamily: "Red-Hat",
-                  color: "#979393",
-                }}
-              >
-                Colors
-              </Text>
-              <View style={{ display: "flex", flexDirection: "row", gap: 10 }}>
+              {/* <View style={{ display: "flex", flexDirection: "row", gap: 10 }}>
                 <View
                   style={{
                     height: 50,
@@ -303,7 +377,7 @@ const SingelProduct = ({ route }) => {
                     SM
                   </Text>
                 </View>
-              </View>
+              </View> */}
             </View>
             <View style={{ gap: 10 }}>
               <Text
@@ -313,7 +387,7 @@ const SingelProduct = ({ route }) => {
                   color: "#979393",
                 }}
               >
-                Amount
+                Quantity
               </Text>
               <View
                 style={{

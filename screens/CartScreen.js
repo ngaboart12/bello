@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet } from "react-native";
 import CheckBox from "expo-checkbox";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import {
@@ -11,6 +11,8 @@ import {
 } from "../redux/Slices/cartSlice";
 import { AntDesign } from "@expo/vector-icons";
 import { Path, Svg } from "react-native-svg";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "../firebaseConfig";
 
 const CartScreen = ({ navigation }) => {
   //const [isChecked, setIsChecked] = useState(false);
@@ -41,16 +43,60 @@ const CartScreen = ({ navigation }) => {
     // Clear the selection
     setSelectAll(false);
   };
-  // const renderItem = ({ item }) => (
-  //   <View>
-  //     <CheckBox
-  //       value={selectAll || item.selected}
-  //       onValueChange={() => dispatch(toggleProductSelection(item))}
-  //     />
-  //     <Text>{item.name}</Text>
-  //     <Button title="Remove" onPress={() => dispatch(removeFromCart(item))} />
-  //   </View>
-  // );
+  const [address, setAddress] = useState("");
+  console.log(address);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Get the current user
+      const currentUser = auth.currentUser;
+
+      // Create a reference to the 'users' collection
+      const usersCollection = collection(db, "users");
+
+      // Create a query to get documents where the 'uid' field is equal to the current user's UID
+      const q = query(usersCollection, where("uid", "==", currentUser.uid));
+
+      try {
+        // Execute the query
+        const querySnapshot = await getDocs(q);
+
+        // Iterate through the documents
+        querySnapshot.forEach((doc) => {
+          setAddress(doc.data().address);
+
+          // Handle the data as needed
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error
+      }
+    };
+
+    fetchData(); // Call the function to fetch data when the component mounts
+
+    // Optionally, you can return a cleanup function if needed
+    // return () => {
+    //   // Cleanup logic here
+    // };
+  }, []);
+
+  const handleCheckout = () => {
+    try {
+      const user = auth.currentUser;
+      if (user == null) {
+        navigation.navigate("login");
+      } else if (!address) {
+        alert("Please add an address before proceeding.");
+        // setModalcheckout(!modalcheckout);
+        navigation.navigate("address");
+      } else {
+        navigation.navigate("checkout");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <View style={{ width: "100%", gap: 20, height: "100%" }}>
@@ -286,7 +332,7 @@ const CartScreen = ({ navigation }) => {
               height: 60,
               justifyContent: "center",
             }}
-            onPress={() => navigation.navigate("checkout")}
+            onPress={handleCheckout}
           >
             <Text style={{ textAlign: "center", color: "white", fontSize: 16 }}>
               Chek it Out

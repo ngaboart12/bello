@@ -32,25 +32,23 @@ const addressesData = [
 const AddressScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
 
-
-
   const [city, setCity] = useState();
   const [street, setStreet] = useState();
-  const [state, setState] = useState();
+  const [district, setDistrict] = useState();
+  const [zone, SetZone] = useState();
 
   const [addresses, setAddresses] = useState(addressesData);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const [newAddress, setNewAddress] = useState("");
 
-  
-
   const updateAddressForCurrentUser = async () => {
     const userId = auth.currentUser.uid;
     const newAddress = {
       city: city,
-      state: state,
+      district: district,
       street: street,
+      zone: zone,
     };
     try {
       // Reference to the users collection in Firestore
@@ -69,7 +67,7 @@ const AddressScreen = ({ navigation, route }) => {
           address: newAddress,
         });
       });
-
+      navigation.navigate("checkout");
       console.log("Addresses updated successfully");
     } catch (error) {
       console.error("Error updating addresses:", error);
@@ -82,70 +80,143 @@ const AddressScreen = ({ navigation, route }) => {
     toggleModal();
   };
 
-  const selectAddressAndNavigate = (item) => {
-    setSelectedAddress(item);
-    onSelectAddress(selectedAddress);
-    navigation.goBack();
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.addressItem}
-      onPress={() => selectAddressAndNavigate(item)}
-    >
-      <Text>{item.address}</Text>
-    </TouchableOpacity>
-  );
-
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={updateAddressForCurrentUser}>
-        <Text>Send ass</Text>
-      </TouchableOpacity>
-      <TextInput placeholder="City" onChangeText={(text) => setCity(text)} />
-      <TextInput
-        placeholder="Street"
-        onChangeText={(text) => setStreet(text)}
-      />
-      <TextInput placeholder="State" onChangeText={(text) => setState(text)} />
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 24,
+        paddingHorizontal: 24,
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <View style={{ padding: 10 }}>
+        <Text style={{ fontSize: 18, fontWeight: 600 }}>
+          Add your delivery address
+        </Text>
+      </View>
+      <View style={{ gap: 10 }}>
+        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+          City
+        </Text>
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={toggleModal}
-      >
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Add New Address</Text>
+        <View
+          style={{
+            height: 60,
+            backgroundColor: "#EAE6E6",
+            padding: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           <TextInput
-            style={styles.input}
-            placeholder="Enter address"
-            value={newAddress}
-            onChangeText={(text) => setNewAddress(text)}
+            placeholder="City"
+            placeholderTextColor="black"
+            onChangeText={(text) => setCity(text)}
+            style={{
+              backgroundColor: "transparent",
+              width: "100%",
+            }}
           />
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() =>
-              addAddressItem({
-                id: String(address.length + 1),
-                address: newAddress,
-              })
-            }
-          >
-            <Text style={styles.addButtonText}>Add Address</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={toggleModal}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
         </View>
-      </Modal>
+      </View>
+      <View style={{ gap: 10 }}>
+        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+          District
+        </Text>
 
-      <TouchableOpacity style={styles.addButton} onPress={toggleModal}>
-        <Text style={styles.addButtonText}>Add New Address</Text>
+        <View
+          style={{
+            height: 60,
+            backgroundColor: "#EAE6E6",
+            padding: 10,
+
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <TextInput
+            placeholder="District"
+            placeholderTextColor="black"
+            onChangeText={(text) => setDistrict(text)}
+            style={{
+              backgroundColor: "transparent",
+              width: "100%",
+            }}
+          />
+        </View>
+      </View>
+      <View style={{ gap: 10 }}>
+        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+          street
+        </Text>
+
+        <View
+          style={{
+            height: 60,
+            backgroundColor: "#EAE6E6",
+            padding: 10,
+
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <TextInput
+            placeholder="Street or house no"
+            placeholderTextColor="black"
+            onChangeText={(text) => setStreet(text)}
+            style={{
+              backgroundColor: "transparent",
+              width: "100%",
+            }}
+          />
+        </View>
+      </View>
+      <View style={{ gap: 10 }}>
+        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+          Zone
+        </Text>
+
+        <View
+          style={{
+            height: 60,
+            backgroundColor: "#EAE6E6",
+            padding: 10,
+
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <TextInput
+            placeholder="Zone"
+            placeholderTextColor="black"
+            onChangeText={(text) => SetZone(text)}
+            style={{
+              backgroundColor: "transparent",
+              width: "100%",
+            }}
+          />
+        </View>
+      </View>
+      <TouchableOpacity
+        onPress={updateAddressForCurrentUser}
+        style={{
+          backgroundColor: "#FFB648",
+          height: 55,
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
+        <Text style={{ textAlign: "center", color: "white", fontSize: 16 }}>
+          Send ass
+        </Text>
       </TouchableOpacity>
     </View>
   );

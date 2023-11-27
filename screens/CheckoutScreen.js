@@ -8,9 +8,10 @@ import {
   Pressable,
   TouchableOpacity,
   Button,
+  Alert,
 } from "react-native";
 import CheckBox from "expo-checkbox";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -22,6 +23,8 @@ import {
 import { AntDesign } from "@expo/vector-icons";
 import { Defs, Path, Pattern, Rect, Svg, Use } from "react-native-svg";
 import { SelectList } from "react-native-dropdown-select-list";
+import { auth, db } from "../firebaseConfig";
+import { collection, getDoc, getDocs, query, where } from "firebase/firestore";
 
 const CheckoutScreen = ({
   route,
@@ -48,6 +51,93 @@ const CheckoutScreen = ({
       icon: "",
     },
   ];
+  const [address, setAddress] = useState("");
+  console.log(address);
+  const addAddress = async () => {
+    const currentUserUid = auth.currentUser.uid;
+
+    // Create a query to find the user document with the matching UID
+    const q = query(
+      collection(db, "users"),
+      where("uid", "==", currentUserUid)
+    );
+
+    // Execute the query
+    const querySnapshot = await getDocs(q);
+
+    // Check if a matching document is found
+    if (!querySnapshot.empty) {
+      // Get the first document from the result (assuming UID is unique)
+      const userDocument = querySnapshot.docs[0];
+
+      // Retrieve the user document data
+      const userData = (await getDoc(userDocument.ref)).data();
+
+      setAddress(userData.address);
+      console.log("User Data:", userData);
+
+      try {
+        if (!address || address.trim() === "") {
+          setModalcheckout(!modalcheckout);
+        } else {
+          setModalcheckout(true);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      // Get the current user
+      const currentUser = auth.currentUser;
+
+      // Create a reference to the 'users' collection
+      const usersCollection = collection(db, "users");
+
+      // Create a query to get documents where the 'uid' field is equal to the current user's UID
+      const q = query(usersCollection, where("uid", "==", currentUser.uid));
+
+      try {
+        // Execute the query
+        const querySnapshot = await getDocs(q);
+
+        // Iterate through the documents
+        querySnapshot.forEach((doc) => {
+          setAddress(doc.data().address);
+
+          // Handle the data as needed
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle the error
+      }
+    };
+
+    fetchData(); // Call the function to fetch data when the component mounts
+
+    // Optionally, you can return a cleanup function if needed
+    // return () => {
+    //   // Cleanup logic here
+    // };
+  }, []);
+
+  const handleCheckModal = () => {
+    try {
+      const user = auth.currentUser;
+      if (!address) {
+        alert("Please add an address before proceeding.");
+        // setModalcheckout(!modalcheckout);
+        navigation.navigate("address");
+      } else if (user != null) {
+        setModalcheckout(true);
+      } else {
+        navigation.navigate("login");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handlePaymentMethodSelect = (method) => {
     setSelectedMethod(method);
@@ -129,7 +219,7 @@ const CheckoutScreen = ({
                 <Text
                   style={{ fontSize: 16, fontWeight: "300", color: "#000" }}
                 >
-                  {item.name}
+                  hhhh
                 </Text>
 
                 <Text
@@ -207,6 +297,9 @@ const CheckoutScreen = ({
                 justifyContent: "space-between",
               }}
             >
+              <Text>
+                {address.district}, {address.zone}, {address.street}
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate("address")}>
                 <Text
                   style={{
@@ -218,7 +311,7 @@ const CheckoutScreen = ({
                     fontWeight: "600",
                   }}
                 >
-                  Select
+                  Change
                 </Text>
               </TouchableOpacity>
 
@@ -420,6 +513,7 @@ const CheckoutScreen = ({
           justifyContent: "center",
           bottom: 15,
           position: "absolute",
+          gap: 10,
         }}
       >
         <View

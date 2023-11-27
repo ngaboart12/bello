@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { Path, Svg } from "react-native-svg";
+import { ScrollView } from "react-native-gesture-handler";
 
 const AssistanceScreen = ({ navigation }) => {
   return (
@@ -27,40 +28,51 @@ const AssistanceScreen = ({ navigation }) => {
             <Text style={styles.title}>Shop Assistant</Text>
           </View>
         </View>
+        <View style={{ height: "86%" }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.titleContent}>
+              <Text style={styles.titleContentHeader}>Select Age</Text>
+              <Text style={styles.titleContentText}>
+                Lorem ipsum dolor sit amet consectetur. Sit vulputate nunc
+                faucibus elit sed tempor. Ultrices porttitor odio dolor duis
+              </Text>
+            </View>
+            <View style={styles.categoryList}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("asscategory")}
+              >
+                <View style={styles.categoryContent}>
+                  <Text style={styles.AgeCategory}>0-5</Text>
+                  <Text style={styles.TextContent}>Months</Text>
+                </View>
+              </TouchableOpacity>
 
-        <View style={styles.titleContent}>
-          <Text style={styles.titleContentHeader}>Select Age</Text>
-          <Text style={styles.titleContentText}>
-            Lorem ipsum dolor sit amet consectetur. Sit vulputate nunc faucibus
-            elit sed tempor. Ultrices porttitor odio dolor duis
-          </Text>
-        </View>
-        <View style={styles.categoryList}>
-          <TouchableOpacity onPress={() => navigation.navigate("asscategory")}>
-            <View style={styles.categoryContent}>
-              <Text style={styles.AgeCategory}>0-5</Text>
-              <Text style={styles.TextContent}>Months</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("asscategory")}
+              >
+                <View style={styles.categoryContent}>
+                  <Text style={styles.AgeCategory}>5-12</Text>
+                  <Text style={styles.TextContent}>Months</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("asscategory")}
+              >
+                <View style={styles.categoryContent}>
+                  <Text style={styles.AgeCategory}>1-2</Text>
+                  <Text style={styles.TextContent}>years</Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("asscategory")}
+              >
+                <View style={styles.categoryContent}>
+                  <Text style={styles.AgeCategory}>2+</Text>
+                  <Text style={styles.TextContent}>years</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => navigation.navigate("asscategory")}>
-            <View style={styles.categoryContent}>
-              <Text style={styles.AgeCategory}>5-12</Text>
-              <Text style={styles.TextContent}>Months</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("asscategory")}>
-            <View style={styles.categoryContent}>
-              <Text style={styles.AgeCategory}>1-2</Text>
-              <Text style={styles.TextContent}>years</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate("asscategory")}>
-            <View style={styles.categoryContent}>
-              <Text style={styles.AgeCategory}>2+</Text>
-              <Text style={styles.TextContent}>years</Text>
-            </View>
-          </TouchableOpacity>
+          </ScrollView>
         </View>
       </View>
     </>
@@ -128,6 +140,7 @@ const styles = StyleSheet.create({
   },
   categoryList: {
     marginTop: 34,
+    paddingBottom: 30,
   },
   AgeCategory: {
     paddingHorizontal: 126,

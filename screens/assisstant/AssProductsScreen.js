@@ -34,8 +34,8 @@ const AssistProductsScreen = ({ navigation }) => {
             <Text style={styles.title}>Collection 0123</Text>
           </View>
         </View>
-        <View style={{ height: "80%" }}>
-          <ScrollView>
+        <View style={{ height: "90%" }}>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.titleContent}>
               <Text style={styles.titleContentText}>
                 Lorem ipsum dolor sit amet consectetur. Sit vulputate nunc s

@@ -44,7 +44,8 @@ const RegisterScreen = ({ navigation }) => {
     });
   }
   const [email, setEmail] = useState("");
-  const [displayName, setUsername] = useState("");
+  const [phone, setPhone] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handelSubmit = async () => {
@@ -54,9 +55,9 @@ const RegisterScreen = ({ navigation }) => {
         const user = auth.currentUser;
         const docRef = addDoc(usersCollection, {
           uid: user.uid,
-          displayName: displayName,
+          username: username,
           email: email,
-          cart: [],
+          phone: phone,
         }).then(async (response) => {
           await sendEmailVerification(user);
           window.alert("verify your email");
@@ -156,6 +157,28 @@ const RegisterScreen = ({ navigation }) => {
                       use my Phone number instead
                     </Text>
                   </TouchableOpacity>
+                </View>
+                <View
+                  style={{ display: "flex", flexDirection: "column", gap: 6 }}
+                >
+                  <Text
+                    style={{ fontSize: 16, color: "#000", fontWeight: 400 }}
+                  >
+                    Phone Number
+                  </Text>
+                  <View
+                    style={{
+                      height: 60,
+                      backgroundColor: "#EAE6E6",
+                      padding: 10,
+                    }}
+                  >
+                    <TextInput
+                      placeholder="Enter your phone"
+                      style={styles.input}
+                      onChangeText={(text) => setPhone(text)}
+                    />
+                  </View>
                 </View>
 
                 <View

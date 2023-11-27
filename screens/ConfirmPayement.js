@@ -62,8 +62,8 @@ const ConfirmPayment = ({ navigation, route }) => {
           personInfo: {
             customerName: userData.username,
             customerEmail: userData.email,
-            customerUid: userData.uid,
           },
+          customerUid: userData.uid,
           address: userData.address,
 
           cart,

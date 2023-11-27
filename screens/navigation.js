@@ -223,7 +223,11 @@ export default function Navigation() {
         <Stack.Screen name="onboard" component={OnboardingScreen} />
         <Stack.Screen name="register" component={RegisterScreen} />
         <Stack.Screen name="product" component={ProductCategory} />
-        <Stack.Screen name="login" component={LoginScreen} />
+        <Stack.Screen
+          name="login"
+          component={LoginScreen}
+          options={{ gestureEnabled: false }}
+        />
         <Stack.Screen name="verify" component={VerifyOtp} />
         <Stack.Screen
           name="order"
@@ -245,7 +249,7 @@ export default function Navigation() {
 
         <Stack.Screen name="userprofile" component={UserProfileScreen} />
         <Stack.Screen name="popular" component={PopularScreen} />
-        {/* <Stack.Screen name="address" component={AddressScreen} /> */}
+
         <Stack.Screen name="assist" component={AssistanceScreen} />
         <Stack.Screen name="asscategory" component={AsscategoryScreen} />
         <Stack.Screen name="assproducts" component={AssistProductsScreen} />
