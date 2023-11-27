@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
   Keyboard,
+  Alert,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
@@ -48,7 +49,48 @@ const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [passwordInputValue, setPasswordInputValue] = useState("");
+  const [phoneInputValue, setPhoneInputValue] = useState("");
+  const [usernameInputValue, setUsernameInputValue] = useState("");
+
+  const [emailInputValue, setEmailInputValue] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handlePasswordInputChange = (text) => {
+    setPasswordInputValue(text);
+
+    setPassword(text);
+  };
+  const handlePhoneInputChange = (text) => {
+    setPhoneInputValue(text);
+
+    setPhone(text);
+  };
+  const handleUsernameInputChange = (text) => {
+    setUsernameInputValue(text);
+
+    setUsername(text);
+  };
+  const handleEmailInputChange = (text) => {
+    setEmailInputValue(text);
+
+    setEmail(text);
+  };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   const handelSubmit = async () => {
+    if (passwordInputValue.trim() === "") {
+      // Display an error message if the input is empty
+      Alert.alert("Error", "Password Input can not be empty");
+    } else if (emailInputValue.trim() === "") {
+      Alert.alert("Error", "Email Input can not be empty");
+    } else if (phoneInputValue.trim() === "") {
+      Alert.alert("Error", "Phone Input can not be empty");
+    } else if (usernameInputValue.trim() === "") {
+      Alert.alert("Error", "username Input can not be empty");
+    }
     await createUserWithEmailAndPassword(auth, email, password).then(
       async () => {
         const usersCollection = collection(db, "users");
@@ -78,7 +120,11 @@ const RegisterScreen = ({ navigation }) => {
           style={{ width: "100%", height: 200 }}
         ></ImageBackground>
         <View style={{ height: "70%" }}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            automaticallyAdjustKeyboardInsets={true}
+            style={{ marginTop: 18 }}
+          >
             <View style={{ padding: 20, gap: 24 }}>
               <View style={{ gap: 8 }}>
                 <Text style={{ fontSize: 16, color: "#000", fontWeight: 400 }}>
@@ -119,7 +165,8 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Your full name"
                       style={styles.input}
-                      onChangeText={(text) => setUsername(text)}
+                      value={usernameInputValue}
+                      onChangeText={handleUsernameInputChange}
                     />
                   </View>
                 </View>
@@ -141,22 +188,10 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Email account"
                       style={styles.input}
-                      onChangeText={(text) => setEmail(text)}
+                      onChangeText={handleEmailInputChange}
+                      value={emailInputValue}
                     />
                   </View>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("usephone")}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: "#007be5",
-                        fontWeight: 400,
-                      }}
-                    >
-                      use my Phone number instead
-                    </Text>
-                  </TouchableOpacity>
                 </View>
                 <View
                   style={{ display: "flex", flexDirection: "column", gap: 6 }}
@@ -176,7 +211,7 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Enter your phone"
                       style={styles.input}
-                      onChangeText={(text) => setPhone(text)}
+                      onChangeText={handlePhoneInputChange}
                     />
                   </View>
                 </View>
@@ -205,26 +240,29 @@ const RegisterScreen = ({ navigation }) => {
                     }}
                   >
                     <TextInput
-                      secureTextEntry
+                      secureTextEntry={!showPassword}
                       placeholder="Create Password"
                       style={styles.input}
-                      onChangeText={(text) => setPassword(text)}
+                      onChangeText={handlePasswordInputChange}
+                      value={passwordInputValue}
                     />
-                    <Svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 30 30"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      style={{ padding: 23 }}
-                    >
-                      <Path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M12.0029 4.00049C16.1389 4.00349 19.8529 6.90249 21.9389 11.7565C22.0209 11.9455 22.0209 12.1595 21.9389 12.3485C19.8539 17.2035 16.1389 20.1025 12.0029 20.1055H11.9969C7.8609 20.1025 4.1469 17.2035 2.0609 12.3485C1.9799 12.1595 1.9799 11.9455 2.0609 11.7565C4.1469 6.90249 7.8619 4.00349 11.9969 4.00049H12.0029ZM11.9999 5.50049C8.5639 5.50149 5.4299 7.94449 3.5699 12.0525C5.4299 16.1615 8.5629 18.6045 11.9999 18.6055C15.4369 18.6045 18.5699 16.1615 20.4299 12.0525C18.5699 7.94449 15.4369 5.50149 11.9999 5.50049ZM11.9996 8.14129C14.1566 8.14129 15.9116 9.89629 15.9116 12.0533C15.9116 14.2093 14.1566 15.9633 11.9996 15.9633C9.8426 15.9633 8.0886 14.2093 8.0886 12.0533C8.0886 9.89629 9.8426 8.14129 11.9996 8.14129ZM11.9996 9.64129C10.6696 9.64129 9.5886 10.7233 9.5886 12.0533C9.5886 13.3823 10.6696 14.4633 11.9996 14.4633C13.3296 14.4633 14.4116 13.3823 14.4116 12.0533C14.4116 10.7233 13.3296 9.64129 11.9996 9.64129Z"
-                        fill="#B8B8B8"
-                      />
-                    </Svg>
+                    <TouchableOpacity onPress={togglePasswordVisibility}>
+                      <Svg
+                        width="9"
+                        height="9"
+                        viewBox="0 0 34 34"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ padding: 23 }}
+                      >
+                        <Path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M12.0029 4.00049C16.1389 4.00349 19.8529 6.90249 21.9389 11.7565C22.0209 11.9455 22.0209 12.1595 21.9389 12.3485C19.8539 17.2035 16.1389 20.1025 12.0029 20.1055H11.9969C7.8609 20.1025 4.1469 17.2035 2.0609 12.3485C1.9799 12.1595 1.9799 11.9455 2.0609 11.7565C4.1469 6.90249 7.8619 4.00349 11.9969 4.00049H12.0029ZM11.9999 5.50049C8.5639 5.50149 5.4299 7.94449 3.5699 12.0525C5.4299 16.1615 8.5629 18.6045 11.9999 18.6055C15.4369 18.6045 18.5699 16.1615 20.4299 12.0525C18.5699 7.94449 15.4369 5.50149 11.9999 5.50049ZM11.9996 8.14129C14.1566 8.14129 15.9116 9.89629 15.9116 12.0533C15.9116 14.2093 14.1566 15.9633 11.9996 15.9633C9.8426 15.9633 8.0886 14.2093 8.0886 12.0533C8.0886 9.89629 9.8426 8.14129 11.9996 8.14129ZM11.9996 9.64129C10.6696 9.64129 9.5886 10.7233 9.5886 12.0533C9.5886 13.3823 10.6696 14.4633 11.9996 14.4633C13.3296 14.4633 14.4116 13.3823 14.4116 12.0533C14.4116 10.7233 13.3296 9.64129 11.9996 9.64129Z"
+                          fill="#B8B8B8"
+                        />
+                      </Svg>
+                    </TouchableOpacity>
                   </View>
                 </View>
                 <View style={{ gap: 10 }}>
