@@ -39,54 +39,55 @@ const CheckoutScreen = ({
   // const { addressItem } = route.params;
 
   const paymentMethods = [
-    { id: "visa", name: "Visa" },
     {
       id: "mtn",
       name: "MTN Mobile Money",
-      icon: "",
+      process: "18******565",
+      url: require("../assets/image/mtn.png"),
     },
     {
       id: "airtel",
       name: "Airtel Money",
-      icon: "",
+      process: "18******565",
+      url: require("../assets/image/airtel.png"),
     },
   ];
   const [address, setAddress] = useState("");
-  console.log(address);
-  const addAddress = async () => {
-    const currentUserUid = auth.currentUser.uid;
 
-    // Create a query to find the user document with the matching UID
-    const q = query(
-      collection(db, "users"),
-      where("uid", "==", currentUserUid)
-    );
+  // const addAddress = async () => {
+  //   const currentUserUid = auth.currentUser.uid;
 
-    // Execute the query
-    const querySnapshot = await getDocs(q);
+  //   // Create a query to find the user document with the matching UID
+  //   const q = query(
+  //     collection(db, "users"),
+  //     where("uid", "==", currentUserUid)
+  //   );
 
-    // Check if a matching document is found
-    if (!querySnapshot.empty) {
-      // Get the first document from the result (assuming UID is unique)
-      const userDocument = querySnapshot.docs[0];
+  //   // Execute the query
+  //   const querySnapshot = await getDocs(q);
 
-      // Retrieve the user document data
-      const userData = (await getDoc(userDocument.ref)).data();
+  //   // Check if a matching document is found
+  //   if (!querySnapshot.empty) {
+  //     // Get the first document from the result (assuming UID is unique)
+  //     const userDocument = querySnapshot.docs[0];
 
-      setAddress(userData.address);
-      console.log("User Data:", userData);
+  //     // Retrieve the user document data
+  //     const userData = (await getDoc(userDocument.ref)).data();
 
-      try {
-        if (!address || address.trim() === "") {
-          setModalcheckout(!modalcheckout);
-        } else {
-          setModalcheckout(true);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
+  //     setAddress(userData.address);
+  //     console.log("User Data:", userData);
+
+  //     try {
+  //       if (!address || address.trim() === "") {
+  //         setModalcheckout(!modalcheckout);
+  //       } else {
+  //         setModalcheckout(true);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }
+  // };
   useEffect(() => {
     const fetchData = async () => {
       // Get the current user
@@ -114,12 +115,7 @@ const CheckoutScreen = ({
       }
     };
 
-    fetchData(); // Call the function to fetch data when the component mounts
-
-    // Optionally, you can return a cleanup function if needed
-    // return () => {
-    //   // Cleanup logic here
-    // };
+    fetchData();
   }, []);
 
   const handleCheckModal = () => {
@@ -618,25 +614,46 @@ const CheckoutScreen = ({
             visible={modalcheckout}
             onRequestClose={onClose}
           >
-            <View style={styles.container}>
-              <Text style={styles.title}>Select Payment Method</Text>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text
+                  style={{
+                    width: 78,
+                    height: 4,
+                    borderRadius: 100,
+                    backgroundColor: "#a6a6a6",
+                    alignSelf: "center",
+                  }}
+                ></Text>
+                <View style={styles.container}>
+                  <Text style={styles.title}>Select Payment Method</Text>
 
-              {paymentMethods.map((method) => (
-                <TouchableOpacity
-                  key={method.id}
-                  style={[
-                    styles.paymentMethod,
-                    selectedMethod === method && styles.selectedMethod,
-                  ]}
-                  onPress={() => handlePaymentMethodSelect(method.name)}
-                >
-                  <Text style={styles.methodText}>{method.name}</Text>
-                </TouchableOpacity>
-              ))}
-
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <Text style={styles.closeButtonText}>Close</Text>
-              </TouchableOpacity>
+                  {paymentMethods.map((method) => (
+                    <TouchableOpacity
+                      key={method.id}
+                      style={[
+                        styles.paymentMethod,
+                        selectedMethod === method && styles.selectedMethod,
+                      ]}
+                      onPress={() => handlePaymentMethodSelect(method.name)}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 20,
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image source={method.url} />
+                        <View>
+                          <Text style={{}}>{method.name}</Text>
+                          <Text style={{}}>{method.process}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
             </View>
           </Modal>
         </View>
@@ -665,6 +682,7 @@ const styles = StyleSheet.create({
     marginTop: 43,
     borderRadius: 4,
   },
+
   container: {
     flex: 1,
     justifyContent: "center",
@@ -689,31 +707,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    paddingVertical: 20,
     backgroundColor: "white",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 16,
+    fontWeight: "medium",
+    marginBottom: 28,
   },
   paymentMethod: {
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
     marginVertical: 5,
-    borderRadius: 5,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#fafafa",
+    backgroundColor: "#fafafa",
     width: "100%",
+    height: 76,
   },
   selectedMethod: {
     backgroundColor: "#e6f7ff",
-    borderColor: "#b3e0ff",
+    borderColor: "#ffb567",
   },
-  methodText: {
-    marginLeft: 10,
-  },
+
   closeButton: {
     marginTop: 10,
     backgroundColor: "#e6e6e6",

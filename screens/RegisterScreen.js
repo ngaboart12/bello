@@ -44,53 +44,38 @@ const RegisterScreen = ({ navigation }) => {
       displayName,
     });
   }
-  const [email, setEmail] = useState("");
+
   const [phone, setPhone] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
-  const [passwordInputValue, setPasswordInputValue] = useState("");
-  const [phoneInputValue, setPhoneInputValue] = useState("");
-  const [usernameInputValue, setUsernameInputValue] = useState("");
-
-  const [emailInputValue, setEmailInputValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handlePasswordInputChange = (text) => {
-    setPasswordInputValue(text);
-
-    setPassword(text);
-  };
-  const handlePhoneInputChange = (text) => {
-    setPhoneInputValue(text);
-
-    setPhone(text);
-  };
-  const handleUsernameInputChange = (text) => {
-    setUsernameInputValue(text);
-
-    setUsername(text);
-  };
-  const handleEmailInputChange = (text) => {
-    setEmailInputValue(text);
-
-    setEmail(text);
-  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const [password, setPasswordText] = useState("");
+  const [email, setEmailText] = useState("");
+  const [phonetext, setPhoneText] = useState("");
+  const [nametext, setNameText] = useState("");
+  const [passwordError, setPasswordError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [phoneError, setPhoneError] = useState(null);
+  const [nameError, setNameError] = useState(null);
 
   const handelSubmit = async () => {
-    if (passwordInputValue.trim() === "") {
-      // Display an error message if the input is empty
-      Alert.alert("Error", "Password Input can not be empty");
-    } else if (emailInputValue.trim() === "") {
-      Alert.alert("Error", "Email Input can not be empty");
-    } else if (phoneInputValue.trim() === "") {
-      Alert.alert("Error", "Phone Input can not be empty");
-    } else if (usernameInputValue.trim() === "") {
-      Alert.alert("Error", "username Input can not be empty");
+    if (nametext.trim() === "") {
+      setNameError("Name required.");
+    } else if (email.trim() === "") {
+      setEmailError("Email required.");
+    } else if (phonetext.trim() === "") {
+      setPhoneError("Phone required.");
+    } else if (password.trim() === "") {
+      setPasswordError("Password required.");
+    } else {
+      setPasswordError(null);
+      setEmailError(null);
     }
+
     await createUserWithEmailAndPassword(auth, email, password).then(
       async () => {
         const usersCollection = collection(db, "users");
@@ -165,11 +150,16 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Your full name"
                       style={styles.input}
-                      value={usernameInputValue}
-                      onChangeText={handleUsernameInputChange}
+                      onChangeText={(inputNameText) =>
+                        setNameText(inputNameText)
+                      }
+                      value={nametext}
                     />
                   </View>
                 </View>
+                {!!nameError && (
+                  <Text style={styles.errorText}>{nameError}</Text>
+                )}
                 <View
                   style={{ display: "flex", flexDirection: "column", gap: 6 }}
                 >
@@ -188,11 +178,16 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Email account"
                       style={styles.input}
-                      onChangeText={handleEmailInputChange}
-                      value={emailInputValue}
+                      onChangeText={(inputEmailText) =>
+                        setEmailText(inputEmailText)
+                      }
+                      value={email}
                     />
                   </View>
                 </View>
+                {!!emailError && (
+                  <Text style={styles.errorText}>{emailError}</Text>
+                )}
                 <View
                   style={{ display: "flex", flexDirection: "column", gap: 6 }}
                 >
@@ -211,10 +206,16 @@ const RegisterScreen = ({ navigation }) => {
                     <TextInput
                       placeholder="Enter your phone"
                       style={styles.input}
-                      onChangeText={handlePhoneInputChange}
+                      onChangeText={(inputPhoneText) =>
+                        setPhoneText(inputPhoneText)
+                      }
+                      value={phonetext}
                     />
                   </View>
                 </View>
+                {!!phoneError && (
+                  <Text style={styles.errorText}>{phoneError}</Text>
+                )}
 
                 <View
                   style={{
@@ -243,8 +244,10 @@ const RegisterScreen = ({ navigation }) => {
                       secureTextEntry={!showPassword}
                       placeholder="Create Password"
                       style={styles.input}
-                      onChangeText={handlePasswordInputChange}
-                      value={passwordInputValue}
+                      onChangeText={(inputPasswordText) =>
+                        setPasswordText(inputPasswordText)
+                      }
+                      value={password}
                     />
                     <TouchableOpacity onPress={togglePasswordVisibility}>
                       <Svg
@@ -264,6 +267,9 @@ const RegisterScreen = ({ navigation }) => {
                       </Svg>
                     </TouchableOpacity>
                   </View>
+                  {!!passwordError && (
+                    <Text style={styles.errorText}>{passwordError}</Text>
+                  )}
                 </View>
                 <View style={{ gap: 10 }}>
                   <TouchableOpacity
@@ -364,6 +370,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     width: "80%",
     height: "100%",
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 10,
   },
 });
 

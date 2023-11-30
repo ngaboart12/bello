@@ -22,6 +22,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
+import { ScrollView } from "react-native-gesture-handler";
 
 const addressesData = [
   { id: "1", address: "123 Main St" },
@@ -32,10 +33,14 @@ const addressesData = [
 const AddressScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
 
-  const [city, setCity] = useState();
-  const [street, setStreet] = useState();
-  const [district, setDistrict] = useState();
-  const [zone, SetZone] = useState();
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [street, setStreet] = useState("");
+  const [zone, setZone] = useState("");
+  const [cityError, setCityError] = useState(null);
+  const [districtError, setDistrictError] = useState(null);
+  const [streetError, setStreetError] = useState(null);
+  const [zoneError, setZoneError] = useState(null);
 
   const [addresses, setAddresses] = useState(addressesData);
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -50,6 +55,20 @@ const AddressScreen = ({ navigation, route }) => {
       street: street,
       zone: zone,
     };
+
+    if (
+      city.trim() === "" ||
+      district.trim() === "" ||
+      street.trim() === "" ||
+      zone.trim() === ""
+    ) {
+      setCityError(city.trim() === "" ? "City required." : null);
+      setDistrictError(district.trim() === "" ? "District required." : null);
+      setStreetError(street.trim() === "" ? "Street required." : null);
+      setZoneError(zone.trim() === "" ? "Zone required." : null);
+      return; // Stop execution if any input is empty
+    }
+
     try {
       // Reference to the users collection in Firestore
       const usersCollectionRef = collection(db, "users");
@@ -94,117 +113,134 @@ const AddressScreen = ({ navigation, route }) => {
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        height: "100%",
+        height: "97%",
+        marginVertical: 10,
       }}
     >
-      <View style={{ padding: 10 }}>
-        <Text style={{ fontSize: 18, fontWeight: 600 }}>
-          Add your delivery address
-        </Text>
-      </View>
-      <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
-          City
-        </Text>
-
-        <View
-          style={{
-            height: 60,
-            backgroundColor: "#EAE6E6",
-            padding: 10,
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextInput
-            placeholder="City"
-            placeholderTextColor="black"
-            onChangeText={(text) => setCity(text)}
-            style={{
-              backgroundColor: "transparent",
-              width: "100%",
-            }}
-          />
+      <ScrollView>
+        <View style={{ padding: 10 }}>
+          <Text style={{ fontSize: 18, fontWeight: 600 }}>
+            Add your delivery address
+          </Text>
         </View>
-      </View>
-      <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
-          District
-        </Text>
+        <View style={{ gap: 10 }}>
+          <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+            City
+          </Text>
 
-        <View
-          style={{
-            height: 60,
-            backgroundColor: "#EAE6E6",
-            padding: 10,
-
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextInput
-            placeholder="District"
-            placeholderTextColor="black"
-            onChangeText={(text) => setDistrict(text)}
+          <View
             style={{
-              backgroundColor: "transparent",
-              width: "100%",
+              height: 60,
+              backgroundColor: "#EAE6E6",
+              padding: 10,
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
-          />
+          >
+            <TextInput
+              placeholder="City"
+              placeholderTextColor="black"
+              style={{
+                backgroundColor: "transparent",
+                width: "100%",
+              }}
+              onChangeText={(inputCityText) => setCity(inputCityText)}
+              value={city}
+            />
+          </View>
+          {!!cityError && <Text style={styles.errorText}>{cityError}</Text>}
         </View>
-      </View>
-      <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
-          street
-        </Text>
+        <View style={{ gap: 10 }}>
+          <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+            District
+          </Text>
 
-        <View
-          style={{
-            height: 60,
-            backgroundColor: "#EAE6E6",
-            padding: 10,
-
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextInput
-            placeholder="Street or house no"
-            placeholderTextColor="black"
-            onChangeText={(text) => setStreet(text)}
+          <View
             style={{
-              backgroundColor: "transparent",
-              width: "100%",
+              height: 60,
+              backgroundColor: "#EAE6E6",
+              padding: 10,
+
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
-          />
+          >
+            <TextInput
+              placeholder="District"
+              placeholderTextColor="black"
+              style={{
+                backgroundColor: "transparent",
+                width: "100%",
+              }}
+              onChangeText={(inputDistrictText) =>
+                setDistrict(inputDistrictText)
+              }
+              value={district}
+            />
+          </View>
+          {!!districtError && (
+            <Text style={styles.errorText}>{districtError}</Text>
+          )}
         </View>
-      </View>
-      <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
-          Zone
-        </Text>
+        <View style={{ gap: 10 }}>
+          <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+            street
+          </Text>
 
-        <View
-          style={{
-            height: 60,
-            backgroundColor: "#EAE6E6",
-            padding: 10,
-
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <TextInput
-            placeholder="Zone"
-            placeholderTextColor="black"
-            onChangeText={(text) => SetZone(text)}
+          <View
             style={{
-              backgroundColor: "transparent",
-              width: "100%",
+              height: 60,
+              backgroundColor: "#EAE6E6",
+              padding: 10,
+
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
-          />
+          >
+            <TextInput
+              placeholder="Street or house no"
+              placeholderTextColor="black"
+              style={{
+                backgroundColor: "transparent",
+                width: "100%",
+              }}
+              onChangeText={(inputStreetText) => setStreet(inputStreetText)}
+              value={street}
+              returnKeyType="next"
+            />
+          </View>
+          {!!streetError && <Text style={styles.errorText}>{streetError}</Text>}
         </View>
-      </View>
+        <View style={{ gap: 10 }}>
+          <Text style={{ fontSize: 16, color: "#000", fontWeight: "400" }}>
+            Zone
+          </Text>
+
+          <View
+            style={{
+              height: 60,
+              backgroundColor: "#EAE6E6",
+              padding: 10,
+
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <TextInput
+              placeholder="Zone"
+              placeholderTextColor="black"
+              style={{
+                backgroundColor: "transparent",
+                width: "100%",
+              }}
+              onChangeText={(inputZoneText) => setZone(inputZoneText)}
+              value={zone}
+              returnKeyType="send"
+            />
+          </View>
+          {!!zoneError && <Text style={styles.errorText}>{zoneError}</Text>}
+        </View>
+      </ScrollView>
       <TouchableOpacity
         onPress={updateAddressForCurrentUser}
         style={{
@@ -212,10 +248,12 @@ const AddressScreen = ({ navigation, route }) => {
           height: 55,
           justifyContent: "center",
           width: "100%",
+          bottom: 0,
+          position: "absolute",
         }}
       >
         <Text style={{ textAlign: "center", color: "white", fontSize: 16 }}>
-          Send ass
+          Update address
         </Text>
       </TouchableOpacity>
     </View>
@@ -231,6 +269,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  errorText: {
+    color: "red",
   },
   // ... (Other styles remain unchanged)
 });

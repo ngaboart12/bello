@@ -27,34 +27,31 @@ import {
 } from "firebase/auth";
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
 
   const [emailInputValue, setEmailInputValue] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleInputChange = (text) => {
-    setInputValue(text);
-
-    setPassword(text);
-  };
-  const handleEmailInputChange = (text) => {
-    setEmailInputValue(text);
-
-    setEmail(text);
-  };
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+  const [password, setPassword] = useState("");
+
+  const [email, setEmailText] = useState("");
+  const [passwordError, setPasswordError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
+  const [emailPasswordError, setEmailPasswordError] = useState(null);
 
   const handelSubmit = async () => {
-    if (inputValue.trim() === "") {
-      // Display an error message if the input is empty
-      Alert.alert("Error", "Password Input can not be empty");
-    } else if (emailInputValue.trim() === "") {
-      Alert.alert("Error", "Email Input can not be empty");
+    if (email.trim() === "") {
+      setEmailError("Email required.");
+    } else if (password.trim() === "") {
+      setPasswordError("Password required.");
+    } else {
+      setPasswordError(null);
+      setEmailError(null);
     }
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -66,7 +63,8 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (err) {
       console.log(err);
-      Alert.alert("Login Error ", "invalid login email or password");
+
+      setEmailPasswordError("invalid login email or password.");
     }
   };
 
@@ -98,7 +96,7 @@ const LoginScreen = ({ navigation }) => {
         source={require("../assets/image/header.png")}
         style={{ width: "100%", height: 200 }}
       ></ImageBackground>
-
+      <StatusBar hidden />
       <View style={{ height: "70%" }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -117,6 +115,11 @@ const LoginScreen = ({ navigation }) => {
                 Sign In
               </Text>
             </View>
+            {!!emailPasswordError && (
+              <Text style={{ color: "red", margin: 10, alignSelf: "center" }}>
+                {emailPasswordError}
+              </Text>
+            )}
 
             <View
               style={{
@@ -141,11 +144,16 @@ const LoginScreen = ({ navigation }) => {
                   <TextInput
                     placeholder="Email account"
                     style={styles.input}
-                    value={emailInputValue}
                     autoCapitalize="none"
-                    onChangeText={handleEmailInputChange}
+                    onChangeText={(inputEmailText) =>
+                      setEmailText(inputEmailText)
+                    }
+                    value={email}
                   />
                 </View>
+                {!!emailError && (
+                  <Text style={styles.errorText}>{emailError}</Text>
+                )}
               </View>
 
               <View
@@ -167,9 +175,10 @@ const LoginScreen = ({ navigation }) => {
                     secureTextEntry={!showPassword}
                     placeholder="Password"
                     style={styles.input}
-                    value={inputValue}
-                    onChangeText={handleInputChange}
+                    onChangeText={(inputText) => setPassword(inputText)}
+                    value={password}
                   />
+
                   <TouchableOpacity onPress={togglePasswordVisibility}>
                     <Svg
                       width="9"
@@ -188,6 +197,9 @@ const LoginScreen = ({ navigation }) => {
                     </Svg>
                   </TouchableOpacity>
                 </View>
+                {!!passwordError && (
+                  <Text style={styles.errorText}>{passwordError}</Text>
+                )}
                 <TouchableOpacity onPress={handleResetPassword}>
                   <Text
                     style={{
@@ -318,6 +330,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     width: "80%",
     height: "100%",
+  },
+  errorText: {
+    color: "red",
+    marginBottom: 10,
   },
   modalContainer: {
     flex: 1,

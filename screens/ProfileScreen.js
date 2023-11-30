@@ -8,6 +8,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 
 const ProfileScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
+  const [userphone, setUserphone] = useState("");
   const [userDate, setUserData] = useState(null);
   const [generateName, setGenerateName] = useState("");
   useEffect(() => {
@@ -29,6 +30,7 @@ const ProfileScreen = ({ navigation }) => {
         querySnapshot.forEach((doc) => {
           setUserData(doc.data());
           setUsername(doc.data().username);
+          setUserphone(doc.data().phone);
 
           // Handle the data as needed
         });
@@ -120,7 +122,7 @@ const ProfileScreen = ({ navigation }) => {
                     color: "#696969",
                   }}
                 >
-                  0787087902
+                  {userphone ? userphone : "User Phone numbers"}
                 </Text>
               </View>
             </View>
@@ -213,7 +215,7 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.producName}>
-                  <Text>Long Sleeve shirt</Text>
+                  <Text>Delivery address</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={() => navigation.navigate("")}>
@@ -333,7 +335,7 @@ const ProfileScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.producName}>
-                  <Text>Long Sleeve shirt</Text>
+                  <Text>About us</Text>
                 </View>
               </View>
               <TouchableOpacity onPress={() => navigation.navigate("")}>
