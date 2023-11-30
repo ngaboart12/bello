@@ -62,8 +62,7 @@ const PendingOrdersScreen = () => {
   }
 
   return (
-    <View>
-      <Text>Pending Orders</Text>
+    <View style={{ paddingHorizontal: 24, gap: 10 }}>
       {pendingOrders.map((order) => (
         <View key={order.id} style={{ marginBottom: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Order ID: {order.id}</Text>

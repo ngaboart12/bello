@@ -171,6 +171,7 @@ const CheckoutScreen = ({
   return (
     <View style={{ width: "100%", height: "100%" }}>
       <View style={{ gap: 15, paddingTop: 38 }}>
+        <Pressable onPress={() => setModalcheckout(false)}></Pressable>
         <View style={{ gap: 30, paddingHorizontal: 24, paddingBottom: 20 }}>
           <View
             style={{
@@ -180,7 +181,18 @@ const CheckoutScreen = ({
             }}
           >
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <AntDesign name="arrowleft" size={24} color="black" />
+              <Svg
+                width="10"
+                height="16"
+                viewBox="0 0 10 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <Path
+                  d="M9.03033 0.46967C9.2966 0.735936 9.3208 1.1526 9.10295 1.44621L9.03033 1.53033L2.561 8L9.03033 14.4697C9.2966 14.7359 9.3208 15.1526 9.10295 15.4462L9.03033 15.5303C8.76406 15.7966 8.3474 15.8208 8.05379 15.6029L7.96967 15.5303L0.96967 8.53033C0.703403 8.26406 0.679197 7.8474 0.897052 7.55379L0.96967 7.46967L7.96967 0.46967C8.26256 0.176777 8.73744 0.176777 9.03033 0.46967Z"
+                  fill="black"
+                />
+              </Svg>
             </TouchableOpacity>
             <Text style={{ fontSize: 20, fontWeight: "700" }}>checkout</Text>
             <Text></Text>
@@ -610,7 +622,6 @@ const CheckoutScreen = ({
           <Modal
             animationType="slide"
             transparent={true}
-            onBackdropPress={onClose}
             visible={modalcheckout}
             onRequestClose={onClose}
           >
@@ -683,11 +694,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -742,51 +748,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-// const CheckoutScreen = () => {
-//   const [isModalVisible, setModalVisible] = useState(false);
-
-//   const toggleModal = () => {
-//     setModalVisible(!isModalVisible);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Button title="Show Modal" onPress={toggleModal} />
-
-//       <Modal
-//         animationType="slide" // You can use 'fade', 'slide', or 'none'
-//         transparent={true}
-//         visible={isModalVisible}
-//         onRequestClose={toggleModal} // Android back button support
-//       >
-//         <View style={styles.modalContainer}>
-//           <View style={styles.modalContent}>
-//             <Text>This is a pop-up modal</Text>
-//             <Button title="Close Modal" onPress={toggleModal} />
-//           </View>
-//         </View>
-//       </Modal>
-//     </View>
-//   );
-// };
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   modalContainer: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//     backgroundColor: "rgba(0, 0, 0, 0.5)",
-//   },
-//   modalContent: {
-//     width: 300,
-//     backgroundColor: "white",
-//     padding: 20,
-//     borderRadius: 10,
-//   },
-// });
 
 export default CheckoutScreen;
